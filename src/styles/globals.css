@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+/* ─── Font ─────────────────────────────────────────────── */
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ─── CSS Custom Properties — Dark mode (default) ──────── */
+:root {
+  --bg: #0A0A0A;
+  --surface: #141414;
+  --border: #222222;
+  --text-primary: #FFFFFF;
+  --text-secondary: #888888;
+  --cyan: #0080C9;
+  --fucsia: #FF006E;
+}
+
+/* ─── Light mode ────────────────────────────────────────── */
+:root[data-theme="light"] {
+  --bg: #F5F5F5;
+  --surface: #FFFFFF;
+  --border: #E0E0E0;
+  --text-primary: #0A0A0A;
+  --text-secondary: #666666;
+}
+
+/* ─── Base ──────────────────────────────────────────────── */
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Leaflet overrides ─────────────────────────────────── */
+.leaflet-container {
+  background: var(--bg);
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ─── Safe area insets (iPhone notch/home bar) ──────────── */
+#root {
+  min-height: 100dvh;
+  padding-bottom: env(safe-area-inset-bottom);
+}

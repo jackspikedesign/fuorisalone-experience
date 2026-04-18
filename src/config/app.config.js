@@ -1,0 +1,31 @@
+export const APP_CONFIG = {
+  name: "Fuori Salone Experience",
+  city: "Milano",
+  dateRange: { start: "2026-04-20", end: "2026-04-26" },
+  centerMap: { lat: 45.4654, lng: 9.1859 },
+  zoomDefault: 13,
+  colors: {
+    cyan: "#0080C9",
+    fucsia: "#FF006E",
+  },
+  zones: [
+    "Castello Sforzesco",
+    "Brera",
+    "5Vie",
+    "Università Statale",
+    "Porta Venezia",
+    "Isola",
+    "Porta Nuova",
+    "Tortona",
+    "Navigli",
+    "NoLo",
+  ],
+  settings: ["outdoor", "cortile"],
+  routes: [
+    { id: "30min", label: "30 minuti",      emoji: "⚡", description: "2–3 tappe, tutto a piedi" },
+    { id: "pausa", label: "Pausa pranzo",   emoji: "☕", description: "4–5 tappe, ~1.5 ore" },
+    { id: "mezza", label: "Mezza giornata", emoji: "🌅", description: "8–10 tappe, metà città" },
+    { id: "full",  label: "Giornata intera",emoji: "🗺", description: "Tutte le installazioni" },
+    { id: "notte", label: "Solo di notte",  emoji: "🌙", description: "Il meglio dopo le 21:00" },
+  ],
+}
