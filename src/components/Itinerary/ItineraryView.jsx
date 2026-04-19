@@ -243,7 +243,17 @@ export default function ItineraryView({ onSelect, theme, selectedRoute, onSelect
         </div>
       </div>
 
-      {stops.length === 0 ? (
+      {!userPos ? (
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px', padding: '40px 32px', textAlign: 'center' }}>
+          <span style={{ fontSize: '40px' }}>📍</span>
+          <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+            Nessuna posizione impostata
+          </p>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>
+            Usa il pulsante <strong>📍 GPS reale</strong> in alto per attivare il GPS, oppure seleziona una zona di Milano per vedere le tappe più vicine.
+          </p>
+        </div>
+      ) : stops.length === 0 ? (
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', flexDirection: 'column', gap: '8px' }}>
           <span style={{ fontSize: '32px' }}>{activeRoute.emoji}</span>
           <p style={{ fontSize: '13px', margin: 0 }}>Nessuna tappa per questo percorso</p>
