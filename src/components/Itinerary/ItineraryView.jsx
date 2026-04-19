@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet'
 import { useInstallations } from '../../hooks/useInstallations'
 import { APP_CONFIG } from '../../config/app.config'
@@ -53,15 +53,27 @@ function LocateButton() {
   )
 }
 
-function MapTab({ stops, theme, isNight }) {
+function FlyToUser({ userPos }) {
+  const map = useMap()
+  useEffect(() => {
+    if (userPos) map.flyTo([userPos.lat, userPos.lng], 14, { animate: true, duration: 0.8 })
+  }, [userPos?.lat, userPos?.lng])
+  return null
+}
+
+function MapTab({ stops, theme, isNight, userPos }) {
   const polylinePoints = stops.map(i => [i.lat, i.lng])
   const tileUrl = theme === 'light' ? TILE_LIGHT : TILE_DARK
   const lineColor = isNight ? '#FF006E' : APP_CONFIG.colors.cyan
+  const initialCenter = userPos
+    ? [userPos.lat, userPos.lng]
+    : [APP_CONFIG.centerMap.lat, APP_CONFIG.centerMap.lng]
 
   return (
     <div style={{ flex: 1, position: 'relative' }}>
-      <MapContainer center={[APP_CONFIG.centerMap.lat, APP_CONFIG.centerMap.lng]} zoom={13} style={{ width: '100%', height: '100%' }} zoomControl={false}>
+      <MapContainer center={initialCenter} zoom={14} style={{ width: '100%', height: '100%' }} zoomControl={false}>
         <TileLayer key={tileUrl} url={tileUrl} attribution='&copy; <a href="https://carto.com/">CARTO</a>' maxZoom={19} />
+        <FlyToUser userPos={userPos} />
         {polylinePoints.length > 1 && (
           <Polyline positions={polylinePoints} pathOptions={{ color: lineColor, weight: 2.5, opacity: 0.7, dashArray: '6 4' }} />
         )}
@@ -260,7 +272,7 @@ export default function ItineraryView({ onSelect, theme, selectedRoute, onSelect
         </div>
       ) : view === 'list'
         ? <ListTab stops={stops} onSelect={onSelect} isNight={isNight} />
-        : <MapTab stops={stops} theme={theme} isNight={isNight} />
+        : <MapTab stops={stops} theme={theme} isNight={isNight} userPos={userPos} />
       }
     </div>
   )
