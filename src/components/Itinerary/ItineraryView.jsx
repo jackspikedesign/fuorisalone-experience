@@ -159,18 +159,26 @@ function ListTab({ stops, onSelect, isNight }) {
   )
 }
 
-export default function ItineraryView({ onSelect, theme, selectedRoute, onSelectRoute }) {
+export default function ItineraryView({ onSelect, theme, selectedRoute, onSelectRoute, userPos }) {
   const [view, setView] = useState('list')
   const { getRoute } = useInstallations()
 
   const activeRoute = APP_CONFIG.routes.find(r => r.id === selectedRoute) || APP_CONFIG.routes[3]
-  const stops = getRoute(activeRoute.id)
+  const stops = getRoute(activeRoute.id, userPos)
   const isNight = activeRoute.id === 'notte'
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Header */}
       <div style={{ padding: '12px 16px 0', backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+
+        {/* GPS banner */}
+        {userPos && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', padding: '6px 10px', backgroundColor: 'rgba(0,128,201,0.1)', borderRadius: '8px', border: '1px solid rgba(0,128,201,0.2)' }}>
+            <span style={{ fontSize: '12px' }}>📍</span>
+            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--cyan)' }}>Percorso ottimizzato dalla tua posizione</span>
+          </div>
+        )}
 
         {/* Route selector — horizontal scroll */}
         <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '10px' }}>

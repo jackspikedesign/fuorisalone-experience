@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { useInstallations } from '../../hooks/useInstallations'
 import { APP_CONFIG } from '../../config/app.config'
 import { isOpenNow } from '../../lib/time'
@@ -168,18 +167,8 @@ function NearbyRow({ installation, distance, onSelect }) {
   )
 }
 
-export default function HomeView({ onSelect, onSelectRoute }) {
+export default function HomeView({ onSelect, onSelectRoute, userPos }) {
   const { installations, highlights } = useInstallations()
-  const [userPos, setUserPos] = useState(null)
-
-  useEffect(() => {
-    if (!navigator.geolocation) return
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => setUserPos({ lat: coords.latitude, lng: coords.longitude }),
-      null,
-      { enableHighAccuracy: false, timeout: 5000 }
-    )
-  }, [])
 
   const nearby = userPos
     ? installations

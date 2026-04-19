@@ -3,6 +3,8 @@ export const APP_CONFIG = {
   city: "Milano",
   dateRange: { start: "2026-04-20", end: "2026-04-26" },
   centerMap: { lat: 45.4654, lng: 9.1859 },
+  milanCenter: { lat: 45.4654, lng: 9.1859 },
+  milanRadiusKm: 15,
   zoomDefault: 13,
   colors: {
     cyan: "#0080C9",

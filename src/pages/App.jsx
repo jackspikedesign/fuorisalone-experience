@@ -1,6 +1,5 @@
-import { useState, lazy, Suspense } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { useTheme } from '../hooks/useTheme'
-import { useAuth } from '../hooks/useAuth'
 import { useFavorites } from '../hooks/useFavorites'
 import TabBar from '../components/UI/TabBar'
 import ThemeToggle from '../components/UI/ThemeToggle'
@@ -12,6 +11,14 @@ const MapView       = lazy(() => import('../components/Map/MapView'))
 const ListView      = lazy(() => import('../components/List/ListView'))
 const ItineraryView = lazy(() => import('../components/Itinerary/ItineraryView'))
 const FavoritesView = lazy(() => import('../components/Favorites/FavoritesView'))
+
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
 
 function ViewLoader() {
   return (
@@ -26,9 +33,22 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home')
   const [selectedInstallation, setSelectedInstallation] = useState(null)
   const [selectedRoute, setSelectedRoute] = useState('full')
+  const [userPos, setUserPos] = useState(null)
   const { theme, toggle } = useTheme()
-  const { user, loading: authLoading, sendMagicLink, signOut } = useAuth()
-  const { favorites, toggle: toggleFavorite, isFavorite } = useFavorites(user)
+  const { favorites, toggle: toggleFavorite, isFavorite } = useFavorites()
+
+  useEffect(() => {
+    if (!navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const { latitude: lat, longitude: lng } = coords
+        const dist = haversineKm(lat, lng, APP_CONFIG.milanCenter.lat, APP_CONFIG.milanCenter.lng)
+        if (dist < APP_CONFIG.milanRadiusKm) setUserPos({ lat, lng })
+      },
+      null,
+      { enableHighAccuracy: false, timeout: 8000 }
+    )
+  }, [])
 
   function handleSelectRoute(routeId) {
     setSelectedRoute(routeId)
@@ -40,10 +60,8 @@ export default function App() {
     selected: selectedInstallation,
     favorites,
     onToggleFavorite: toggleFavorite,
-    user,
-    sendMagicLink,
-    signOut,
     theme,
+    userPos,
   }
 
   return (
@@ -68,24 +86,10 @@ export default function App() {
         zIndex: 100,
       }}>
         <div>
-          <h1 style={{
-            fontSize: '15px',
-            fontWeight: 700,
-            color: 'var(--text-primary)',
-            margin: 0,
-            letterSpacing: '-0.01em',
-          }}>
+          <h1 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.01em' }}>
             {APP_CONFIG.name}
           </h1>
-          <p style={{
-            fontSize: '11px',
-            fontWeight: 500,
-            color: 'var(--cyan)',
-            margin: 0,
-            marginTop: '1px',
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-          }}>
+          <p style={{ fontSize: '11px', fontWeight: 500, color: 'var(--cyan)', margin: 0, marginTop: '1px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
             Milano Design Week 2026
           </p>
         </div>
@@ -110,7 +114,7 @@ export default function App() {
       <DetailSheet
         installation={selectedInstallation}
         onClose={() => setSelectedInstallation(null)}
-        onToggleFavorite={user ? toggleFavorite : () => setActiveTab('favorites')}
+        onToggleFavorite={toggleFavorite}
         isFavorite={selectedInstallation ? isFavorite(selectedInstallation.id) : false}
       />
     </div>

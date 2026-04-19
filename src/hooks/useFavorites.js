@@ -1,48 +1,28 @@
-import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '../lib/supabase'
+import { useState, useCallback } from 'react'
 
-export function useFavorites(user) {
-  const [favorites, setFavorites] = useState([])
-  const [loading, setLoading] = useState(false)
+const STORAGE_KEY = 'fse_favorites'
 
-  useEffect(() => {
-    if (!user) {
-      setFavorites([])
-      return
-    }
-    setLoading(true)
-    supabase
-      .from('favorites')
-      .select('installation_id')
-      .eq('user_id', user.id)
-      .then(({ data }) => {
-        setFavorites(data?.map(r => r.installation_id) ?? [])
-        setLoading(false)
-      })
-  }, [user])
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') } catch { return [] }
+}
 
-  const toggle = useCallback(async (installation) => {
-    if (!user) return
+function save(ids) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(ids)) } catch {}
+}
+
+export function useFavorites() {
+  const [favorites, setFavorites] = useState(() => load())
+
+  const toggle = useCallback((installation) => {
     const id = installation.id
-    const isFav = favorites.includes(id)
-
-    // Optimistic update
-    setFavorites(prev => isFav ? prev.filter(f => f !== id) : [...prev, id])
-
-    if (isFav) {
-      await supabase
-        .from('favorites')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('installation_id', id)
-    } else {
-      await supabase
-        .from('favorites')
-        .insert({ user_id: user.id, installation_id: id })
-    }
-  }, [user, favorites])
+    setFavorites(prev => {
+      const next = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
+      save(next)
+      return next
+    })
+  }, [])
 
   const isFavorite = useCallback((id) => favorites.includes(id), [favorites])
 
-  return { favorites, loading, toggle, isFavorite }
+  return { favorites, toggle, isFavorite }
 }
