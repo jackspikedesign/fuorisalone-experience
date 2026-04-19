@@ -61,7 +61,7 @@ function FlyToUser({ userPos }) {
   return null
 }
 
-function MapTab({ stops, theme, isNight, userPos }) {
+function MapTab({ stops, theme, isNight, userPos, onSelect }) {
   const polylinePoints = stops.map(i => [i.lat, i.lng])
   const tileUrl = theme === 'light' ? TILE_LIGHT : TILE_DARK
   const lineColor = isNight ? '#FF006E' : APP_CONFIG.colors.cyan
@@ -79,7 +79,12 @@ function MapTab({ stops, theme, isNight, userPos }) {
         )}
         <UserLocation />
         {stops.map((inst, idx) => (
-          <Marker key={inst.id} position={[inst.lat, inst.lng]} icon={createNumberIcon(idx + 1, isNight)} />
+          <Marker
+            key={inst.id}
+            position={[inst.lat, inst.lng]}
+            icon={createNumberIcon(idx + 1, isNight)}
+            eventHandlers={{ click: () => onSelect(inst) }}
+          />
         ))}
         <LocateButton />
       </MapContainer>
@@ -272,7 +277,7 @@ export default function ItineraryView({ onSelect, theme, selectedRoute, onSelect
         </div>
       ) : view === 'list'
         ? <ListTab stops={stops} onSelect={onSelect} isNight={isNight} />
-        : <MapTab stops={stops} theme={theme} isNight={isNight} userPos={userPos} />
+        : <MapTab stops={stops} theme={theme} isNight={isNight} userPos={userPos} onSelect={onSelect} />
       }
     </div>
   )
