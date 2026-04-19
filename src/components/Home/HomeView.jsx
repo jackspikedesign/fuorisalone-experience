@@ -12,27 +12,42 @@ function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 const ROUTE_CONFIG = {
+  // Blu mattina — brand primario, fresco, immediato
   '30min': {
-    gradient: 'linear-gradient(140deg, #0080C9 0%, #0060a0 100%)',
+    bg: 'linear-gradient(145deg, #0089d6 0%, #0068a8 100%)',
+    shadow: 'rgba(0,104,168,0.3)',
+    label: '#fff',
+    desc: 'rgba(255,255,255,0.68)',
+    iconStroke: 'rgba(255,255,255,0.9)',
     icon: (
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="rgba(255,255,255,0.2)" stroke="#fff" strokeWidth="1.5"/>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
       </svg>
     ),
   },
+  // Verde smeraldo — pausa nel verde, aria aperta, pranzo fuori
   pausa: {
-    gradient: 'linear-gradient(140deg, #00a3cc 0%, #007fa3 100%)',
+    bg: 'linear-gradient(145deg, #12b886 0%, #099268 100%)',
+    shadow: 'rgba(9,146,104,0.3)',
+    label: '#fff',
+    desc: 'rgba(255,255,255,0.68)',
+    iconStroke: 'rgba(255,255,255,0.9)',
     icon: (
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="9"/>
         <polyline points="12 7 12 12 15.5 14"/>
       </svg>
     ),
   },
+  // Arancio bruciato — calore del pomeriggio milanese, terracotta, mattoni
   mezza: {
-    gradient: 'linear-gradient(140deg, #f59e0b 0%, #d97706 100%)',
+    bg: 'linear-gradient(145deg, #f76707 0%, #d9480f 100%)',
+    shadow: 'rgba(217,72,15,0.3)',
+    label: '#fff',
+    desc: 'rgba(255,255,255,0.68)',
+    iconStroke: 'rgba(255,255,255,0.9)',
     icon: (
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="4"/>
         <line x1="12" y1="2" x2="12" y2="5"/>
         <line x1="12" y1="19" x2="12" y2="22"/>
@@ -45,21 +60,30 @@ const ROUTE_CONFIG = {
       </svg>
     ),
   },
+  // Giallo vivo — design è luce, massima energia, testo scuro per contrasto
   full: {
-    gradient: 'linear-gradient(140deg, #1d4ed8 0%, #1e3a8a 100%)',
+    bg: 'linear-gradient(145deg, #ffd43b 0%, #fcc419 100%)',
+    shadow: 'rgba(252,196,25,0.35)',
+    label: '#2c1a00',
+    desc: 'rgba(44,26,0,0.58)',
+    iconStroke: 'rgba(44,26,0,0.75)',
     icon: (
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(44,26,0,0.75)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="9"/>
         <line x1="2" y1="12" x2="22" y2="12"/>
         <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
       </svg>
     ),
   },
+  // Notte: viola profondo + fucsia — ora magica, design è anche buio
   notte: {
-    gradient: 'linear-gradient(140deg, #1a0830 0%, #2d0f52 100%)',
-    accent: '#FF006E',
+    bg: 'linear-gradient(145deg, #1c1028 0%, #2e1250 100%)',
+    shadow: 'rgba(255,0,110,0.22)',
+    label: '#FF006E',
+    desc: 'rgba(255,255,255,0.42)',
+    iconStroke: '#FF006E',
     icon: (
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="rgba(255,0,110,0.25)" stroke="#FF006E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="rgba(255,0,110,0.2)" stroke="#FF006E" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
       </svg>
     ),
@@ -68,7 +92,6 @@ const ROUTE_CONFIG = {
 
 function RouteCard({ route, fullWidth, onSelect }) {
   const cfg = ROUTE_CONFIG[route.id] || ROUTE_CONFIG['full']
-  const isNight = route.id === 'notte'
 
   return (
     <button
@@ -81,25 +104,21 @@ function RouteCard({ route, fullWidth, onSelect }) {
         gap: fullWidth ? '14px' : '10px',
         padding: fullWidth ? '18px 20px' : '18px 16px',
         borderRadius: '16px',
-        background: cfg.gradient,
+        background: cfg.bg,
         border: 'none',
         cursor: 'pointer',
         textAlign: 'left',
         width: '100%',
         boxSizing: 'border-box',
-        boxShadow: isNight
-          ? '0 4px 20px rgba(255,0,110,0.2)'
-          : '0 4px 16px rgba(0,80,150,0.18)',
+        boxShadow: `0 4px 18px ${cfg.shadow}`,
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* subtle shine */}
       <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: '50%',
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%)',
+        position: 'absolute', top: 0, left: 0, right: 0, height: '45%',
+        background: 'linear-gradient(180deg, rgba(255,255,255,0.07) 0%, transparent 100%)',
         pointerEvents: 'none',
-        borderRadius: '16px 16px 0 0',
       }} />
 
       <div style={{ flexShrink: 0 }}>{cfg.icon}</div>
@@ -109,7 +128,7 @@ function RouteCard({ route, fullWidth, onSelect }) {
           fontSize: fullWidth ? '17px' : '15px',
           fontWeight: 800,
           fontFamily: 'Montserrat, sans-serif',
-          color: isNight ? '#FF006E' : '#fff',
+          color: cfg.label,
           margin: '0 0 3px',
           lineHeight: 1.15,
         }}>
@@ -117,7 +136,7 @@ function RouteCard({ route, fullWidth, onSelect }) {
         </p>
         <p style={{
           fontSize: '11px',
-          color: isNight ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.75)',
+          color: cfg.desc,
           margin: 0,
           lineHeight: 1.4,
           fontFamily: 'Montserrat, sans-serif',
@@ -126,10 +145,9 @@ function RouteCard({ route, fullWidth, onSelect }) {
         </p>
       </div>
 
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-        stroke={isNight ? '#FF006E' : 'rgba(255,255,255,0.6)'}
-        strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-        style={{ flexShrink: 0 }}>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+        stroke={cfg.iconStroke} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+        style={{ flexShrink: 0, opacity: 0.7 }}>
         <polyline points="9 18 15 12 9 6"/>
       </svg>
     </button>
