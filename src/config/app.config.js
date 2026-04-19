@@ -23,6 +23,18 @@ export const APP_CONFIG = {
     "NoLo",
   ],
   settings: ["outdoor", "cortile"],
+  zoneCoords: {
+    "Castello Sforzesco": { lat: 45.4704, lng: 9.1797 },
+    "Brera":              { lat: 45.4720, lng: 9.1864 },
+    "5Vie":               { lat: 45.4632, lng: 9.1852 },
+    "Università Statale": { lat: 45.4583, lng: 9.1969 },
+    "Porta Venezia":      { lat: 45.4730, lng: 9.2063 },
+    "Isola":              { lat: 45.4895, lng: 9.1875 },
+    "Porta Nuova":        { lat: 45.4848, lng: 9.1917 },
+    "Tortona":            { lat: 45.4518, lng: 9.1627 },
+    "Navigli":            { lat: 45.4508, lng: 9.1755 },
+    "NoLo":               { lat: 45.4882, lng: 9.2129 },
+  },
   routes: [
     { id: "30min", label: "30 minuti",      emoji: "⚡", description: "2–3 tappe, tutto a piedi" },
     { id: "pausa", label: "Pausa pranzo",   emoji: "☕", description: "4–5 tappe, ~1.5 ore" },

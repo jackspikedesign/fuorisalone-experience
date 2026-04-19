@@ -3,6 +3,7 @@ import { useTheme } from '../hooks/useTheme'
 import { useFavorites } from '../hooks/useFavorites'
 import TabBar from '../components/UI/TabBar'
 import ThemeToggle from '../components/UI/ThemeToggle'
+import PositionPicker from '../components/UI/PositionPicker'
 import DetailSheet from '../components/Detail/DetailSheet'
 import { APP_CONFIG } from '../config/app.config'
 
@@ -33,7 +34,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home')
   const [selectedInstallation, setSelectedInstallation] = useState(null)
   const [selectedRoute, setSelectedRoute] = useState('full')
-  const [userPos, setUserPos] = useState(null)
+  const [gpsPos, setGpsPos] = useState(null)
+  const [simPos, setSimPos] = useState(null)
+  const userPos = simPos ?? gpsPos
   const { theme, toggle } = useTheme()
   const { favorites, toggle: toggleFavorite, isFavorite } = useFavorites()
 
@@ -43,7 +46,7 @@ export default function App() {
       ({ coords }) => {
         const { latitude: lat, longitude: lng } = coords
         const dist = haversineKm(lat, lng, APP_CONFIG.milanCenter.lat, APP_CONFIG.milanCenter.lng)
-        if (dist < APP_CONFIG.milanRadiusKm) setUserPos({ lat, lng })
+        if (dist < APP_CONFIG.milanRadiusKm) setGpsPos({ lat, lng })
       },
       null,
       { enableHighAccuracy: false, timeout: 8000 }
@@ -93,7 +96,10 @@ export default function App() {
             Milano Design Week 2026
           </p>
         </div>
-        <ThemeToggle theme={theme} onToggle={toggle} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <PositionPicker simPos={simPos} onSelect={setSimPos} />
+          <ThemeToggle theme={theme} onToggle={toggle} />
+        </div>
       </header>
 
       {/* Main content */}
