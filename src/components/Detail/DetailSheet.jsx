@@ -14,7 +14,7 @@ function openMaps(address) {
 }
 
 async function shareInstallation(installation) {
-  const url = `${window.location.origin}/share?id=${installation.id}`
+  const url = `${window.location.origin}/api/share?id=${installation.id}`
   const text = `${installation.name} — ${installation.artist_studio}\n${installation.address}`
   if (navigator.share) {
     try {

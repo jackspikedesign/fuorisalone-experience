@@ -1,4 +1,5 @@
-const data = require('../src/data/events.json')
+const path = require('path')
+const data = require(path.join(__dirname, '../src/data/events.json'))
 
 function escape(str) {
   return String(str ?? '')
