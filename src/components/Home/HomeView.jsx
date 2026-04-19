@@ -228,11 +228,24 @@ export default function HomeView({ onSelect, onSelectRoute, userPos }) {
         <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 12px', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
           Quanto tempo hai?
         </p>
-        <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
-          {APP_CONFIG.routes.map(route => (
-            <RouteCard key={route.id} route={route} onSelect={onSelectRoute} />
-          ))}
-        </div>
+        {userPos ? (
+          <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
+            {APP_CONFIG.routes.map(route => (
+              <RouteCard key={route.id} route={route} onSelect={onSelectRoute} />
+            ))}
+          </div>
+        ) : (
+          <div style={{
+            padding: '16px', borderRadius: '12px',
+            border: '1.5px dashed var(--border)',
+            display: 'flex', alignItems: 'center', gap: '12px',
+          }}>
+            <span style={{ fontSize: '24px', flexShrink: 0 }}>📍</span>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
+              Imposta la tua posizione (pulsante in alto) per scoprire i percorsi vicino a te.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Highlights section */}
