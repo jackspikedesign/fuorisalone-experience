@@ -11,55 +11,128 @@ function haversineKm(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-function RouteCard({ route, fullWidth }) {
+const ROUTE_CONFIG = {
+  '30min': {
+    gradient: 'linear-gradient(140deg, #0080C9 0%, #0060a0 100%)',
+    icon: (
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="rgba(255,255,255,0.2)" stroke="#fff" strokeWidth="1.5"/>
+      </svg>
+    ),
+  },
+  pausa: {
+    gradient: 'linear-gradient(140deg, #00a3cc 0%, #007fa3 100%)',
+    icon: (
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <polyline points="12 7 12 12 15.5 14"/>
+      </svg>
+    ),
+  },
+  mezza: {
+    gradient: 'linear-gradient(140deg, #f59e0b 0%, #d97706 100%)',
+    icon: (
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <line x1="12" y1="2" x2="12" y2="5"/>
+        <line x1="12" y1="19" x2="12" y2="22"/>
+        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+        <line x1="2" y1="12" x2="5" y2="12"/>
+        <line x1="19" y1="12" x2="22" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+        <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+      </svg>
+    ),
+  },
+  full: {
+    gradient: 'linear-gradient(140deg, #1d4ed8 0%, #1e3a8a 100%)',
+    icon: (
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    ),
+  },
+  notte: {
+    gradient: 'linear-gradient(140deg, #1a0830 0%, #2d0f52 100%)',
+    accent: '#FF006E',
+    icon: (
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="rgba(255,0,110,0.25)" stroke="#FF006E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    ),
+  },
+}
+
+function RouteCard({ route, fullWidth, onSelect }) {
+  const cfg = ROUTE_CONFIG[route.id] || ROUTE_CONFIG['full']
   const isNight = route.id === 'notte'
-  const accent = isNight ? '#FF006E' : '#0080C9'
-  const bg = isNight ? 'rgba(255,0,110,0.07)' : 'rgba(0,128,201,0.07)'
-  const border = isNight ? 'rgba(255,0,110,0.25)' : 'rgba(0,128,201,0.2)'
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: fullWidth ? 'row' : 'column',
-      alignItems: fullWidth ? 'center' : 'flex-start',
-      gap: fullWidth ? '16px' : '6px',
-      padding: fullWidth ? '16px 20px' : '16px 14px',
-      borderRadius: '14px',
-      border: `1.5px solid ${border}`,
-      backgroundColor: bg,
-      textAlign: 'left',
-      width: '100%',
-      boxSizing: 'border-box',
-    }}>
-      <span style={{ fontSize: fullWidth ? '32px' : '28px', lineHeight: 1, flexShrink: 0 }}>
-        {route.emoji}
-      </span>
+    <button
+      onClick={() => onSelect(route.id)}
+      style={{
+        display: 'flex',
+        flexDirection: fullWidth ? 'row' : 'column',
+        alignItems: fullWidth ? 'center' : 'flex-start',
+        justifyContent: 'space-between',
+        gap: fullWidth ? '14px' : '10px',
+        padding: fullWidth ? '18px 20px' : '18px 16px',
+        borderRadius: '16px',
+        background: cfg.gradient,
+        border: 'none',
+        cursor: 'pointer',
+        textAlign: 'left',
+        width: '100%',
+        boxSizing: 'border-box',
+        boxShadow: isNight
+          ? '0 4px 20px rgba(255,0,110,0.2)'
+          : '0 4px 16px rgba(0,80,150,0.18)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* subtle shine */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '50%',
+        background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%)',
+        pointerEvents: 'none',
+        borderRadius: '16px 16px 0 0',
+      }} />
+
+      <div style={{ flexShrink: 0 }}>{cfg.icon}</div>
+
       <div style={{ flex: 1 }}>
         <p style={{
-          fontSize: fullWidth ? '16px' : '14px',
+          fontSize: fullWidth ? '17px' : '15px',
           fontWeight: 800,
           fontFamily: 'Montserrat, sans-serif',
-          color: accent,
-          margin: '0 0 2px',
-          lineHeight: 1.2,
+          color: isNight ? '#FF006E' : '#fff',
+          margin: '0 0 3px',
+          lineHeight: 1.15,
         }}>
           {route.label}
         </p>
         <p style={{
           fontSize: '11px',
-          fontWeight: 400,
-          fontFamily: 'Montserrat, sans-serif',
-          color: 'var(--text-secondary)',
+          color: isNight ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.75)',
           margin: 0,
           lineHeight: 1.4,
+          fontFamily: 'Montserrat, sans-serif',
         }}>
           {route.description}
         </p>
       </div>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }}>
-        <polyline points="9 18 15 12 9 6" />
+
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke={isNight ? '#FF006E' : 'rgba(255,255,255,0.6)'}
+        strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+        style={{ flexShrink: 0 }}>
+        <polyline points="9 18 15 12 9 6"/>
       </svg>
-    </div>
+    </button>
   )
 }
 
@@ -70,23 +143,10 @@ function RouteGrid({ onSelectRoute }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
         {main.map(route => (
-          <button
-            key={route.id}
-            onClick={() => onSelectRoute(route.id)}
-            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
-          >
-            <RouteCard route={route} fullWidth={false} />
-          </button>
+          <RouteCard key={route.id} route={route} fullWidth={false} onSelect={onSelectRoute} />
         ))}
       </div>
-      {night && (
-        <button
-          onClick={() => onSelectRoute(night.id)}
-          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', width: '100%' }}
-        >
-          <RouteCard route={night} fullWidth={true} />
-        </button>
-      )}
+      {night && <RouteCard route={night} fullWidth={true} onSelect={onSelectRoute} />}
     </div>
   )
 }
@@ -99,28 +159,26 @@ function HighlightCard({ installation, onSelect }) {
     <button
       onClick={() => onSelect(installation)}
       style={{
-        flex: '0 0 220px',
-        borderRadius: '12px',
+        flex: '0 0 200px',
+        borderRadius: '14px',
         overflow: 'hidden',
-        border: '1px solid var(--border)',
         backgroundColor: 'var(--surface)',
         cursor: 'pointer',
         textAlign: 'left',
         position: 'relative',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
       }}
     >
-      {/* Image */}
-      <div style={{ width: '100%', aspectRatio: '16/9', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ width: '100%', aspectRatio: '4/3', position: 'relative', overflow: 'hidden' }}>
         {imgError ? (
           <div style={{
-            width: '100%',
-            height: '100%',
-            background: `linear-gradient(135deg, #141414 0%, #1e1e1e 100%)`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            width: '100%', height: '100%',
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <span style={{ fontSize: '28px' }}>{installation.setting === 'outdoor' ? '🌆' : '🏛'}</span>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
           </div>
         ) : (
           <img
@@ -130,28 +188,32 @@ function HighlightCard({ installation, onSelect }) {
             onError={() => setImgError(true)}
           />
         )}
-        {/* Open badge */}
         <div style={{
-          position: 'absolute', bottom: '6px', left: '8px',
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.65) 100%)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '8px', left: '8px',
           display: 'flex', alignItems: 'center', gap: '4px',
-          backgroundColor: 'rgba(0,0,0,0.7)', borderRadius: '999px', padding: '3px 8px',
         }}>
-          <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: open ? '#22c55e' : '#888' }} />
-          <span style={{ fontSize: '9px', fontWeight: 600, color: '#fff' }}>{open ? 'Aperto' : 'Chiuso'}</span>
+          <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: open ? '#22c55e' : '#888', flexShrink: 0 }} />
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#fff', letterSpacing: '0.03em' }}>{open ? 'Aperto' : 'Chiuso'}</span>
         </div>
       </div>
-      {/* Text */}
-      <div style={{ padding: '8px 10px' }}>
-        <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 2px', lineHeight: 1.3 }}>
+      <div style={{ padding: '10px 12px 12px' }}>
+        <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 2px', lineHeight: 1.3 }}>
           {installation.name}
         </p>
-        <p style={{ fontSize: '10px', fontWeight: 500, color: 'var(--cyan)', margin: 0 }}>
+        <p style={{ fontSize: '10px', fontWeight: 600, color: 'var(--cyan)', margin: 0 }}>
           {installation.artist_studio}
         </p>
         {installation.night_note && (
-          <p style={{ fontSize: '9px', color: 'var(--fucsia)', margin: '4px 0 0', display: 'flex', alignItems: 'center', gap: '3px' }}>
-            🌙 <span>Fantastica di notte</span>
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '6px' }}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="#FF006E">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <span style={{ fontSize: '9px', color: 'var(--fucsia)', fontWeight: 600 }}>Fantastica di notte</span>
+          </div>
         )}
       </div>
     </button>
@@ -164,25 +226,25 @@ function NearbyRow({ installation, distance, onSelect }) {
     <button
       onClick={() => onSelect(installation)}
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        width: '100%',
-        textAlign: 'left',
-        background: 'none',
-        border: 'none',
-        padding: '10px 0',
-        cursor: 'pointer',
-        borderBottom: '1px solid var(--border)',
+        display: 'flex', alignItems: 'center', gap: '12px',
+        width: '100%', textAlign: 'left', background: 'none',
+        border: 'none', padding: '10px 0', cursor: 'pointer',
       }}
     >
       <div style={{
-        width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
-        backgroundColor: 'var(--bg)',
+        width: '40px', height: '40px', borderRadius: '12px', flexShrink: 0,
+        background: 'linear-gradient(135deg, rgba(0,128,201,0.15) 0%, rgba(0,128,201,0.08) 100%)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '18px',
       }}>
-        {installation.setting === 'outdoor' ? '🌆' : '🏛'}
+        {installation.setting === 'outdoor' ? (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="1.8" strokeLinecap="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        ) : (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="1.8" strokeLinecap="round">
+            <line x1="2" y1="22" x2="22" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>
+          </svg>
+        )}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0, lineHeight: 1.3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -193,10 +255,10 @@ function NearbyRow({ installation, distance, onSelect }) {
         </p>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px', flexShrink: 0 }}>
-        <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--cyan)' }}>
+        <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--cyan)' }}>
           {distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(1)} km`}
         </span>
-        <span style={{ fontSize: '10px', color: open ? '#22c55e' : 'var(--text-secondary)' }}>
+        <span style={{ fontSize: '10px', fontWeight: 600, color: open ? '#22c55e' : 'var(--text-secondary)' }}>
           {open ? 'Aperto' : 'Chiuso'}
         </span>
       </div>
@@ -214,61 +276,67 @@ export default function HomeView({ onSelect, onSelectRoute, userPos }) {
         .slice(0, 3)
     : []
 
-  const today = new Date()
-  const hour = today.getHours()
-  const isNightTime = hour >= 19 || hour < 6
-
   return (
     <div style={{ height: '100%', overflowY: 'auto', backgroundColor: 'var(--bg)' }}>
 
       {/* Hero banner */}
       <div style={{
         margin: '12px 16px 0',
-        borderRadius: '14px',
+        borderRadius: '16px',
         background: 'linear-gradient(135deg, #0080C9 0%, #005fa3 50%, #003d6b 100%)',
-        padding: '14px 16px',
+        padding: '16px 18px',
         position: 'relative',
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: '12px',
+        boxShadow: '0 4px 20px rgba(0,80,150,0.25)',
       }}>
-        <div style={{ position: 'absolute', top: 0, right: 0, width: '120px', height: '100%', background: 'radial-gradient(circle at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '100%', background: 'radial-gradient(circle at 80% 30%, rgba(255,255,255,0.1) 0%, transparent 65%)', pointerEvents: 'none' }} />
         <div>
-          <p style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255,255,255,0.65)', margin: '0 0 2px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          <p style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.6)', margin: '0 0 3px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
             Milano Design Week 2026
           </p>
-          <p style={{ fontSize: '16px', fontWeight: 700, color: '#fff', margin: 0, lineHeight: 1.25, fontFamily: 'Montserrat, sans-serif' }}>
-            Arte gratuita in tutta Milano
+          <p style={{ fontSize: '17px', fontWeight: 800, color: '#fff', margin: 0, lineHeight: 1.2, fontFamily: 'Montserrat, sans-serif' }}>
+            Arte gratuita<br />in tutta Milano
           </p>
         </div>
         <div style={{ flexShrink: 0, textAlign: 'right' }}>
-          <p style={{ fontSize: '22px', fontWeight: 800, color: '#fff', margin: 0, fontFamily: 'Montserrat, sans-serif', lineHeight: 1 }}>
+          <p style={{ fontSize: '28px', fontWeight: 800, color: '#fff', margin: 0, fontFamily: 'Montserrat, sans-serif', lineHeight: 1 }}>
             {installations.length}
           </p>
-          <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', margin: '2px 0 0', lineHeight: 1.2 }}>
-            installazioni<br />20–26 apr
+          <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.65)', margin: '3px 0 0', lineHeight: 1.3, fontWeight: 500 }}>
+            install.<br />20–26 apr
           </p>
         </div>
       </div>
 
       {/* Percorsi section */}
-      <div style={{ padding: '16px 16px 0' }}>
-        <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 10px', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
+      <div style={{ padding: '18px 16px 0' }}>
+        <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
           Quanto tempo hai?
         </p>
         {userPos ? (
           <RouteGrid onSelectRoute={onSelectRoute} />
         ) : (
           <div style={{
-            padding: '16px', borderRadius: '12px',
-            border: '1.5px dashed var(--border)',
-            display: 'flex', alignItems: 'center', gap: '12px',
+            padding: '20px 16px',
+            borderRadius: '16px',
+            background: 'var(--surface)',
+            display: 'flex', alignItems: 'center', gap: '14px',
           }}>
-            <span style={{ fontSize: '24px', flexShrink: 0 }}>📍</span>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
-              Imposta la tua posizione (pulsante in alto) per scoprire i percorsi vicino a te.
+            <div style={{
+              width: '44px', height: '44px', borderRadius: '12px', flexShrink: 0,
+              background: 'rgba(0,128,201,0.1)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="2" strokeLinecap="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
+              Imposta la tua posizione per scoprire i percorsi vicino a te.
             </p>
           </div>
         )}
@@ -276,12 +344,12 @@ export default function HomeView({ onSelect, onSelectRoute, userPos }) {
 
       {/* Highlights section */}
       {highlights.length > 0 && (
-        <div style={{ padding: '20px 0 0' }}>
+        <div style={{ padding: '24px 0 0' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', marginBottom: '12px' }}>
-            <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', margin: 0, letterSpacing: '0.07em', textTransform: 'uppercase' }}>
-              ★ Da non perdere
+            <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', margin: 0, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              Da non perdere
             </p>
-            <span style={{ fontSize: '11px', color: 'var(--cyan)', fontWeight: 600 }}>
+            <span style={{ fontSize: '11px', color: 'var(--cyan)', fontWeight: 700 }}>
               {highlights.length} installazioni
             </span>
           </div>
@@ -295,19 +363,20 @@ export default function HomeView({ onSelect, onSelectRoute, userPos }) {
 
       {/* Nearby section */}
       {nearby.length > 0 && (
-        <div style={{ padding: '20px 16px 0' }}>
-          <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 4px', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
-            📍 Vicino a te
+        <div style={{ padding: '24px 16px 0' }}>
+          <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Vicino a te
           </p>
           <div>
-            {nearby.map(inst => (
-              <NearbyRow key={inst.id} installation={inst} distance={inst._dist} onSelect={onSelect} />
+            {nearby.map((inst, idx) => (
+              <div key={inst.id} style={{ borderTop: idx === 0 ? 'none' : '1px solid var(--border)' }}>
+                <NearbyRow installation={inst} distance={inst._dist} onSelect={onSelect} />
+              </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Bottom padding for tab bar */}
       <div style={{ height: '80px' }} />
     </div>
   )
