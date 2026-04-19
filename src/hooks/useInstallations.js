@@ -58,16 +58,26 @@ export function useInstallations(filters = {}) {
   }, [installations, filters.zone, filters.setting, filters.search, filters.highlightOnly])
 
   const getRoute = useMemo(() => (routeId, userPos) => {
-    const candidates = installations.filter(i => i.routes?.[routeId] != null)
     const maxStops = ROUTE_STOPS[routeId] ?? Infinity
+    // Percorso notturno: solo installazioni con night_note
+    const pool = routeId === 'notte'
+      ? installations.filter(i => i.night_note)
+      : installations
 
     if (userPos && isInMilan(userPos.lat, userPos.lng)) {
-      const optimized = nearestNeighbor(candidates, userPos)
-      return optimized.slice(0, maxStops)
+      // Prende le N installazioni più vicine, poi ottimizza l'ordine di visita
+      const byDistance = [...pool]
+        .sort((a, b) =>
+          haversineKm(userPos.lat, userPos.lng, a.lat, a.lng) -
+          haversineKm(userPos.lat, userPos.lng, b.lat, b.lng)
+        )
+        .slice(0, maxStops === Infinity ? pool.length : maxStops)
+      return nearestNeighbor(byDistance, userPos)
     }
 
-    // Fallback: ordine editoriale
-    return candidates
+    // Fallback senza posizione: ordine editoriale
+    return pool
+      .filter(i => i.routes?.[routeId] != null)
       .sort((a, b) => a.routes[routeId] - b.routes[routeId])
       .slice(0, maxStops)
   }, [installations])
