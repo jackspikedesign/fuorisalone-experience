@@ -11,47 +11,83 @@ function haversineKm(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-function RouteCard({ route, onSelect }) {
+function RouteCard({ route, fullWidth }) {
   const isNight = route.id === 'notte'
+  const accent = isNight ? '#FF006E' : '#0080C9'
+  const bg = isNight ? 'rgba(255,0,110,0.07)' : 'rgba(0,128,201,0.07)'
+  const border = isNight ? 'rgba(255,0,110,0.25)' : 'rgba(0,128,201,0.2)'
+
   return (
-    <button
-      onClick={() => onSelect(route.id)}
-      style={{
-        flex: '0 0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: '4px',
-        padding: '12px 14px',
-        borderRadius: '12px',
-        border: `1.5px solid ${isNight ? 'rgba(255,0,110,0.3)' : 'rgba(0,128,201,0.25)'}`,
-        backgroundColor: isNight ? 'rgba(255,0,110,0.07)' : 'rgba(0,128,201,0.07)',
-        cursor: 'pointer',
-        textAlign: 'left',
-        minWidth: '120px',
-        transition: 'all 0.15s',
-      }}
-    >
-      <span style={{ fontSize: '20px', lineHeight: 1 }}>{route.emoji}</span>
-      <span style={{
-        fontSize: '12px',
-        fontWeight: 700,
-        fontFamily: 'Montserrat, sans-serif',
-        color: isNight ? 'var(--fucsia)' : 'var(--cyan)',
-        lineHeight: 1.2,
-      }}>
-        {route.label}
+    <div style={{
+      display: 'flex',
+      flexDirection: fullWidth ? 'row' : 'column',
+      alignItems: fullWidth ? 'center' : 'flex-start',
+      gap: fullWidth ? '16px' : '6px',
+      padding: fullWidth ? '16px 20px' : '16px 14px',
+      borderRadius: '14px',
+      border: `1.5px solid ${border}`,
+      backgroundColor: bg,
+      textAlign: 'left',
+      width: '100%',
+      boxSizing: 'border-box',
+    }}>
+      <span style={{ fontSize: fullWidth ? '32px' : '28px', lineHeight: 1, flexShrink: 0 }}>
+        {route.emoji}
       </span>
-      <span style={{
-        fontSize: '10px',
-        fontWeight: 400,
-        fontFamily: 'Montserrat, sans-serif',
-        color: 'var(--text-secondary)',
-        lineHeight: 1.3,
-      }}>
-        {route.description}
-      </span>
-    </button>
+      <div style={{ flex: 1 }}>
+        <p style={{
+          fontSize: fullWidth ? '16px' : '14px',
+          fontWeight: 800,
+          fontFamily: 'Montserrat, sans-serif',
+          color: accent,
+          margin: '0 0 2px',
+          lineHeight: 1.2,
+        }}>
+          {route.label}
+        </p>
+        <p style={{
+          fontSize: '11px',
+          fontWeight: 400,
+          fontFamily: 'Montserrat, sans-serif',
+          color: 'var(--text-secondary)',
+          margin: 0,
+          lineHeight: 1.4,
+        }}>
+          {route.description}
+        </p>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }}>
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </div>
+  )
+}
+
+function RouteGrid({ onSelectRoute }) {
+  const main = APP_CONFIG.routes.filter(r => r.id !== 'notte')
+  const night = APP_CONFIG.routes.find(r => r.id === 'notte')
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+        {main.map(route => (
+          <button
+            key={route.id}
+            onClick={() => onSelectRoute(route.id)}
+            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
+          >
+            <RouteCard route={route} fullWidth={false} />
+          </button>
+        ))}
+      </div>
+      {night && (
+        <button
+          onClick={() => onSelectRoute(night.id)}
+          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', width: '100%' }}
+        >
+          <RouteCard route={night} fullWidth={true} />
+        </button>
+      )}
+    </div>
   )
 }
 
@@ -187,53 +223,43 @@ export default function HomeView({ onSelect, onSelectRoute, userPos }) {
 
       {/* Hero banner */}
       <div style={{
-        margin: '16px 16px 0',
-        borderRadius: '16px',
-        overflow: 'hidden',
+        margin: '12px 16px 0',
+        borderRadius: '14px',
         background: 'linear-gradient(135deg, #0080C9 0%, #005fa3 50%, #003d6b 100%)',
-        padding: '20px 20px 18px',
+        padding: '14px 16px',
         position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '12px',
       }}>
-        <div style={{
-          position: 'absolute', top: 0, right: 0, width: '140px', height: '100%',
-          background: 'radial-gradient(circle at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-        <p style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.7)', margin: '0 0 4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-          Milano Design Week 2026
-        </p>
-        <p style={{ fontSize: '20px', fontWeight: 700, color: '#fff', margin: '0 0 6px', lineHeight: 1.2, fontFamily: 'Montserrat, sans-serif' }}>
-          Arte gratuita<br />in tutta Milano
-        </p>
-        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.5 }}>
-          {installations.length} installazioni esterne e cortili aperti · 20–26 aprile
-        </p>
-        {isNightTime && (
-          <div style={{
-            marginTop: '10px',
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            backgroundColor: 'rgba(255,0,110,0.2)', borderRadius: '999px',
-            padding: '4px 10px', border: '1px solid rgba(255,0,110,0.4)',
-          }}>
-            <span style={{ fontSize: '12px' }}>🌙</span>
-            <span style={{ fontSize: '11px', fontWeight: 600, color: '#FF006E' }}>
-              Stasera è perfetto per il percorso notturno
-            </span>
-          </div>
-        )}
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '120px', height: '100%', background: 'radial-gradient(circle at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div>
+          <p style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255,255,255,0.65)', margin: '0 0 2px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Milano Design Week 2026
+          </p>
+          <p style={{ fontSize: '16px', fontWeight: 700, color: '#fff', margin: 0, lineHeight: 1.25, fontFamily: 'Montserrat, sans-serif' }}>
+            Arte gratuita in tutta Milano
+          </p>
+        </div>
+        <div style={{ flexShrink: 0, textAlign: 'right' }}>
+          <p style={{ fontSize: '22px', fontWeight: 800, color: '#fff', margin: 0, fontFamily: 'Montserrat, sans-serif', lineHeight: 1 }}>
+            {installations.length}
+          </p>
+          <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', margin: '2px 0 0', lineHeight: 1.2 }}>
+            installazioni<br />20–26 apr
+          </p>
+        </div>
       </div>
 
       {/* Percorsi section */}
-      <div style={{ padding: '20px 16px 0' }}>
-        <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 12px', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
+      <div style={{ padding: '16px 16px 0' }}>
+        <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', margin: '0 0 10px', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
           Quanto tempo hai?
         </p>
         {userPos ? (
-          <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px' }}>
-            {APP_CONFIG.routes.map(route => (
-              <RouteCard key={route.id} route={route} onSelect={onSelectRoute} />
-            ))}
-          </div>
+          <RouteGrid onSelectRoute={onSelectRoute} />
         ) : (
           <div style={{
             padding: '16px', borderRadius: '12px',
