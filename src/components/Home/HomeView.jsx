@@ -62,8 +62,8 @@ const ROUTE_CONFIG = {
   },
   // Giallo intenso — design è luce, massima energia, bianco su oro
   full: {
-    bg: 'linear-gradient(145deg, #e8a000 0%, #c47f00 100%)',
-    shadow: 'rgba(200,130,0,0.35)',
+    bg: 'linear-gradient(145deg, #ffc200 0%, #e07800 100%)',
+    shadow: 'rgba(220,120,0,0.35)',
     label: '#fff',
     desc: 'rgba(255,255,255,0.72)',
     iconStroke: 'rgba(255,255,255,0.9)',
