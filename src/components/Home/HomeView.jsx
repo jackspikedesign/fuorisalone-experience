@@ -60,15 +60,15 @@ const ROUTE_CONFIG = {
       </svg>
     ),
   },
-  // Giallo vivo — design è luce, massima energia, testo scuro per contrasto
+  // Giallo intenso — design è luce, massima energia, bianco su oro
   full: {
-    bg: 'linear-gradient(145deg, #ffd43b 0%, #fcc419 100%)',
-    shadow: 'rgba(252,196,25,0.35)',
-    label: '#2c1a00',
-    desc: 'rgba(44,26,0,0.58)',
-    iconStroke: 'rgba(44,26,0,0.75)',
+    bg: 'linear-gradient(145deg, #e8a000 0%, #c47f00 100%)',
+    shadow: 'rgba(200,130,0,0.35)',
+    label: '#fff',
+    desc: 'rgba(255,255,255,0.72)',
+    iconStroke: 'rgba(255,255,255,0.9)',
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(44,26,0,0.75)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="9"/>
         <line x1="2" y1="12" x2="22" y2="12"/>
         <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
