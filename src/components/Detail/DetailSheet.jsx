@@ -14,14 +14,14 @@ function openMaps(address) {
 }
 
 async function shareInstallation(installation) {
-  const text = `${installation.name} — ${installation.artist_studio}\n${installation.description}`
-  const url = window.location.href
+  const url = `${window.location.origin}/share?id=${installation.id}`
+  const text = `${installation.name} — ${installation.artist_studio}\n${installation.address}`
   if (navigator.share) {
     try {
       await navigator.share({ title: installation.name, text, url })
     } catch (_) { /* dismissed */ }
   } else {
-    await navigator.clipboard.writeText(`${text}\n${url}`)
+    await navigator.clipboard.writeText(url)
     alert('Link copiato negli appunti!')
   }
 }

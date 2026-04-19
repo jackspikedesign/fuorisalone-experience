@@ -1,6 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { useTheme } from '../hooks/useTheme'
 import { useFavorites } from '../hooks/useFavorites'
+import { useInstallations } from '../hooks/useInstallations'
 import TabBar from '../components/UI/TabBar'
 import ThemeToggle from '../components/UI/ThemeToggle'
 import PositionPicker from '../components/UI/PositionPicker'
@@ -39,6 +40,18 @@ export default function App() {
   const userPos = simPos ?? gpsPos
   const { theme, toggle } = useTheme()
   const { favorites, toggle: toggleFavorite, isFavorite } = useFavorites()
+  const { installations } = useInstallations()
+
+  // Deep link: apre il detail sheet se l'URL contiene ?id=
+  useEffect(() => {
+    if (!installations.length) return
+    const id = new URLSearchParams(window.location.search).get('id')
+    if (id) {
+      const found = installations.find(i => i.id === id)
+      if (found) setSelectedInstallation(found)
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [installations])
 
   useEffect(() => {
     if (!navigator.geolocation) return
